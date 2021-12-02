@@ -97,7 +97,7 @@ void congfigcheck(string configcommand){
         string cmd=configcommand.substr(0,temp1);
         bool valid=false;
         if(cmd.compare("LINEAR")==0||cmd.compare("DOUBLE")==0){
-            //valid=true;
+            valid=true;
         }
         string m=configcommand.substr(temp1+1,temp2-temp1-1);
         string c=configcommand.substr(temp2+1);
