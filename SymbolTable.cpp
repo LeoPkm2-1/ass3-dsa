@@ -14,10 +14,23 @@ void SymbolTable::run(string filename)
     {               
         if(hash_config){    //dòng đầu tiên luôn là dòng config hash 
             hash_config=false;
-            cout<< "lenh hash: "<<line<<endl;
+            cout<< "lenh hash: "<<endl;
+            int configinfor[4];
+            if(!congfigcheck(line,configinfor)){
+                cout<<"config wrong\n";
+                break;
+            }
+            if(configinfor[0]=='Q'){
+                cout<<(char)configinfor[0]<<"--"<<configinfor[1]<<"--"<<configinfor[2]<<"--"<<configinfor[3]<<endl;
+            }else{
+                cout<<(char)configinfor[0]<<"--"<<configinfor[1]<<"--"<<configinfor[2]<<endl;
+            }
+
         }
         else{
-            cout<<boolalpha<<start_With_SpaceR(line)<<"-"<<count_CharR(line)<<"-"<<line<<endl;
+            string component[3];
+            int numOfComponent=0;
+            cout<<boolalpha<<command_Form_check(line,component,numOfComponent)<<"-"<<count_CharR(line)<<"-"<<line<<endl;
         }
     }
 
