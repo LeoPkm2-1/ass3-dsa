@@ -2,10 +2,13 @@
 #include <string>
 #include <fstream>
 #include <regex>
+#include <typeinfo>
 
 
 using namespace std;
-
+typedef int SONGUYEN;
+typedef long long int KEY_NUM;
+typedef unsigned long long int U_KEY_NUM;
 bool end_With_SpaceR(string &str){
     if(str.length()==0){
         return false;
@@ -44,9 +47,11 @@ int convert_To_Num(string str){
 int convert_To_NumR(string& str);
 bool is_Number(string str);
 int number_length(int);
-int transfer_Name_to_Key(string name,int level=0);
+U_KEY_NUM transfer_Name_to_num_Key(string name,int level=0);
 int count_CharR(string& str,char c);
 
+string transfer_Name_to_str_Key(string name,int level);
+U_KEY_NUM transfer_strKey_to_numKey(string strKEY);
 bool congfigcheck(string configcommand,int (&configarr)[4]){
    int strleng=configcommand.length();
    if(configcommand[0]==' '||configcommand[strleng-1]==' '){
@@ -133,32 +138,42 @@ bool congfigcheck(string configcommand,int (&configarr)[4]){
     return true;
 
 }
-
 bool command_Form_check(string command, string (&componet)[3],int& numOfComponent);
-
 bool identifierrule(string & str);
+
 
 int main(){
 
-    
-    // string a="ahihi fdsjkfsl";
-    // int temp1=a.find_first_of(' ');
-    // cout<<"-"<<a.substr(0,temp1)<<"-"<<endl;
-    // cout<<"-"<<a.substr(temp1+1)<<"-"<<endl;
-    string cmd= "PRINT_";
-    string component[3];
-    int numOfComponent=0;
-    bool check=command_Form_check(cmd,component,numOfComponent);
-    if(check){
-        for (int i = 0; i < numOfComponent; i++)
-        {
-            cout<<"\b\b--"<<component[i]<<"--";
-        }
-        
-    }
-    else{
-        cout<<"wrong"<<"--"<<cmd<<"--"<<endl;
-    }
+
+    // string a;
+    // if(a.empty()){
+    //     cout<<"ahihi"<<endl;
+    // }
+    // a.clear();
+    // if(a.empty()){
+    //     cout<<"hehe"<<endl;
+    // }
+
+
+    U_KEY_NUM a=91000000;
+    cout<<a<<endl;
+    int b =a;
+    cout<<b<<endl;
+    // int b=10;
+    // U_KEY_NUM a=100;
+    // a=a%b;
+    // cout<<a<<endl;
+    // cout<<sizeof(long long int)<<endl;
+    // cout<<sizeof(unsigned long long int)<<endl;
+    //cout<<transfer_Name_to_num_Key("xB",1);
+    // string key1=transfer_Name_to_str_Key("xB",1);
+    // cout<<transfer_strKey_to_numKey(key1);
+    // cout<<endl<<sizeof(string)<<endl;
+
+    // string a="123456789";
+    // a[3]+=5;
+    // a[4]+=5;
+    // cout<<a<<endl;
 
     return 0;
 }
@@ -277,9 +292,9 @@ bool is_Number(string str){
     return str.find_first_not_of("0123456789")== string::npos;
 }
 
-int transfer_Name_to_Key(string name,int level){
+U_KEY_NUM transfer_Name_to_num_Key(string name,int level){
     if(level>=0){
-        int key=level;
+        U_KEY_NUM key=level;
         int leng=name.length();
         for (int i = 0; i < leng;i++)
         {
@@ -294,8 +309,20 @@ int transfer_Name_to_Key(string name,int level){
         }
         return key;
     }else{
-        return -1;
+        return 0;
     }
+}
+
+U_KEY_NUM transfer_strKey_to_numKey(string strKEY){
+    int leng=strKEY.length();
+    U_KEY_NUM key=0;
+    for (int i = 0; i < leng; i++)
+    {
+        key=key*10;
+        key=key+(strKEY[i]-48);
+    }
+    return key;
+    
 }
 
 int convert_To_NumR(string& str){
@@ -338,4 +365,15 @@ bool identifierrule(string & str){// check name is accept
     }
 
     return false;
+}
+
+string transfer_Name_to_str_Key(string name,int level){
+    string key(to_string(level));
+    int leng=name.length();
+    for (int i = 0; i < leng; i++)
+    {
+        key.append(to_string((name[i]-48)));
+    }
+    return key;
+    
 }
