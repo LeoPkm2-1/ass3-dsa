@@ -145,35 +145,19 @@ bool identifierrule(string & str);
 int main(){
 
 
-    // string a;
-    // if(a.empty()){
-    //     cout<<"ahihi"<<endl;
-    // }
-    // a.clear();
-    // if(a.empty()){
-    //     cout<<"hehe"<<endl;
-    // }
-
-
-    U_KEY_NUM a=91000000;
-    cout<<a<<endl;
-    int b =a;
-    cout<<b<<endl;
-    // int b=10;
-    // U_KEY_NUM a=100;
-    // a=a%b;
-    // cout<<a<<endl;
-    // cout<<sizeof(long long int)<<endl;
-    // cout<<sizeof(unsigned long long int)<<endl;
-    //cout<<transfer_Name_to_num_Key("xB",1);
-    // string key1=transfer_Name_to_str_Key("xB",1);
-    // cout<<transfer_strKey_to_numKey(key1);
-    // cout<<endl<<sizeof(string)<<endl;
-
-    // string a="123456789";
-    // a[3]+=5;
-    // a[4]+=5;
-    // cout<<a<<endl;
+    // int a=904000;
+    // string s;
+    // s.assign(a,'-');
+    // s[98000]='x';
+    // cout<<s.find_first_of('x');
+    //cout<<s<<endl;
+    //cout<<"0123456789"<<endl;
+    int* a=new int[1];
+    for (int i = 0; i < 5; i++)
+    {
+        cout<<a[i]<<endl;
+    }
+    
 
     return 0;
 }

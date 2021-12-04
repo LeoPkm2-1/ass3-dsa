@@ -37,8 +37,12 @@ void SymbolTable::run(string filename)
                 hash.probing=configinfor[0];
                 hash.capacity=configinfor[1];
                 hash.level_Hashlist.assign(hash.capacity,'-');
+                //cout<<"0+0"<<hash.level_Hashlist<<"0+0"<<endl;
+                //cout<<hash.capacity<<endl;
                 hash.c1=configinfor[2];
                 hash.Hashtable=new Symbol[hash.capacity];
+                
+                
             }
 
         }
@@ -48,10 +52,37 @@ void SymbolTable::run(string filename)
             if(command_Form_check(line,component,numOfComponent)){  //lệnh dung
 
                 if(component[0].compare("INSERT")==0){
-                    cout<<component[0]<<"-"<<component[1]<<endl;
-                    cout<<hash.level_Hashlist<<endl;
-                    int temp =transfer_Name_to_num_Key(component[1]);
-                    hash.linear_Probing(temp);
+                    if(numOfComponent==2){
+                        cout<<component[0]<<"-"<<component[1]<<endl;
+                        string id_symbol(component[1]);
+
+                        int num_key =transfer_Name_to_num_Key(id_symbol);
+                        int loop=0;
+                        int check=hash.insert_to_hash(num_key,loop,component[1]);
+                        cout<<"check: "<<check<<endl;
+                        if(check>0) cout<<component[1]<<" have bean lot: ^^"<< check<<endl;
+                        else if(check==-1){ //bien da ton tai
+                           // myFile.close();  // dong file
+
+
+                            //giai phong vung nho ne
+                            cout<<" co loi m on r"<<endl;
+
+                            // quang loi
+                            Redeclared Redeclaredmessage(component[1]);
+                            throw Redeclared(component[1]);
+
+                        }
+                        else{   //loi bang day
+
+
+                        }
+                        //hash.insert_to_hash()
+                    }else{
+                         cout<<component[0]<<"-"<<component[1]<<"-"<<component[2]<<endl;
+                    }
+                   
+                   
                 }
                 else if(component[0].compare("ASSIGN")==0){
                     cout<<component[0]<<"-"<<component[1]<<endl;

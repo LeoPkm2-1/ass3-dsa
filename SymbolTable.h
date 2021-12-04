@@ -92,13 +92,13 @@ public:
             if(Hashtable[h_p].empty){
                 return h_p;
             }
+            //else if(Hashtable[h_p])
             else{
                 continue;
             }
         }
         return -1;        
     }
-
     int linear_Probing_i(U_KEY_NUM key,int &loop){
         int h_k=h1(key);
         for (int i = 0; i < capacity; i++)
@@ -114,7 +114,6 @@ public:
         }
         return -1;        
     }
-
     int quadratic_Probing(U_KEY_NUM key){
         int h_k=h1(key);
         for (int i = 0; i < capacity; i++)
@@ -130,7 +129,6 @@ public:
         return -1;
         
     }
-
     int quadratic_Probing_i(U_KEY_NUM key,int &loop){
         int h_k=h1(key);
         for (int i = 0; i < capacity; i++)
@@ -147,7 +145,6 @@ public:
         return -1;
         
     }
-
     int double_Probing(U_KEY_NUM key){
         int h1_k=h1(key);
         int h2_k=h2(key);
@@ -164,7 +161,6 @@ public:
         return -1;
 
     }
-
     int double_Probing_i(U_KEY_NUM key,int&loop){
         int h1_k=h1(key);
         int h2_k=h2(key);
@@ -173,6 +169,7 @@ public:
             int h_p=(h1_k + c1*i*h2_k)%capacity;
             loop=i;
             if(Hashtable[h_p].empty){
+                //Hashtable[h_p].empty=false;
                 return h_p;
             }
             else{
@@ -183,6 +180,82 @@ public:
 
     }
 
+    int insert_to_hash(U_KEY_NUM key,int &loop,string name=""){
+
+        if(this->probing=='L'){ //linear
+            int h_k=h1(key);
+            for (int i = 0; i < capacity; i++)
+            {
+                int h_p=(h_k+c1*i)%capacity;
+                loop=i;
+                if(Hashtable[h_p].empty){
+                    if(this->maxLoop<loop){
+                        Hashtable[h_p].empty=false;
+                        maxLoop=loop;
+                    }
+                    return h_p;
+                }
+                else if(name.compare(Hashtable[h_p].identifier)==0){
+
+                    return -1;  //da ton tai
+                }
+                else{
+                    continue;
+                }
+            }
+            return -2;  //over follow
+            
+
+        }
+        else if(probing=='D'){  //double
+            int h1_k=h1(key);
+            int h2_k=h2(key);
+            for (int i = 0; i < capacity; i++)
+            {
+                int h_p=( h1_k +c1*i*h2_k )%capacity;
+                loop=i;
+                if(Hashtable[h_p].empty){
+                    if(this->maxLoop<loop){
+                        maxLoop=loop;
+                    }
+                    Hashtable[h_p].empty=false;
+                    return h_p;
+                }
+                else if(name.compare(Hashtable[h_p].identifier)==0){
+                    return -1;  //da ton tai
+                }
+                else{
+                    continue;
+                }
+            }
+            return -2;  //over follow;
+            
+        }
+        else{   //quadratic
+
+            int h_k=h1(key);
+            for (int i = 0; i < capacity; i++)
+            {
+                int h_p=(h_k+c1*i+c2*i*i)%capacity;
+                loop=i;
+                if(Hashtable[h_p].empty){
+                    if(this->maxLoop<loop){
+                        maxLoop=loop;
+                    }
+                    return h_p;
+                }
+                else if(name.compare(Hashtable[h_p].identifier)==0){
+                    return -1;  //da ton tai
+                }
+                else{
+                    continue;
+                }
+            }
+            
+            return -2;  //over follow
+
+        }
+    }
 
 
 };
