@@ -140,11 +140,11 @@ bool congfigcheck(string configcommand,int (&configarr)[4]){
 }
 bool command_Form_check(string command, string (&componet)[3],int& numOfComponent);
 bool identifierrule(string & str);
-
+string initial_signature(int para);
 
 int main(){
 
-
+    cout<<initial_signature(6)<<endl;
     // int a=904000;
     // string s;
     // s.assign(a,'-');
@@ -157,12 +157,39 @@ int main(){
     // {
     //     cout<<a[i]<<endl;
     // }
-    string a="0010021234";
-    cout<<convert_To_NumR(a)<<endl;
+    // string a="0010021234";
+    // cout<<convert_To_NumR(a)<<endl;
+    // int a=5;
+    // char c=a+48;
+    // cout<<c<<endl;
     
     
 
     return 0;
+}
+
+string initial_signature(int para){
+    if(para==0){
+        return "#()";
+    }
+    else if(para==1){
+        return "#(#)";
+    }
+    else if(para==2){
+        return "#(#,#)";
+    }
+    else if(para>=3){
+        string temp="#(#";
+        for (int i = 1; i < para; i++)
+        {
+            temp.append(",#");
+        }
+        temp.push_back(')');
+        return temp;
+        
+        // "#(#,#,#)"
+    }
+    return "";
 }
 
 int count_CharR(string &str,char c){

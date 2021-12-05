@@ -23,6 +23,7 @@ bool command_Form_check(string command, string (&componet)[3],int& numOfComponen
 bool identifierrule(string & str);
 string transfer_Name_to_str_Key(string name,int level);
 U_KEY_NUM transfer_strKey_to_numKey(string strKEY);
+string initial_signature(int para);
 //=========================================================================
 
 class Symbol{
@@ -109,6 +110,9 @@ public:
         }
         return -1;        
     }
+
+
+
     int linear_Probing_i(U_KEY_NUM key,int &loop){
         int h_k=h1(key);
         for (int i = 0; i < capacity; i++)
@@ -139,6 +143,7 @@ public:
         return -1;
         
     }
+    
     int quadratic_Probing_i(U_KEY_NUM key,int &loop){
         int h_k=h1(key);
         for (int i = 0; i < capacity; i++)
@@ -190,7 +195,7 @@ public:
 
     }
 
-    int insert_to_hash(U_KEY_NUM key,int &loop,string name=""){
+    int insert_to_hash(U_KEY_NUM key,int &level,int &loop,string name=""){
 
         if(this->probing=='L'){ //linear
             int h_k=h1(key);
@@ -208,16 +213,14 @@ public:
                     //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
                     return h_p;
                 }
-                else if(name.compare(Hashtable[h_p].identifier)==0){
-
+                else if((name.compare(Hashtable[h_p].identifier)==0)&&(level==Hashtable[h_p].level)){
                     return -1;  //da ton tai
                 }
                 else{
                     continue;
                 }
             }
-            return -2;  //over follow
-            
+            return -2;  //over follow           
 
         }
         else if(probing=='D'){  //double
@@ -226,15 +229,19 @@ public:
             for (int i = 0; i < capacity; i++)
             {
                 int h_p=( h1_k +c1*i*h2_k )%capacity;
+                //cout<<"ret--"<<h1_k<<"-"<<h2_k<<"-"<<i<<"-"<<c1<<"-"<<h_p<<endl;
                 loop=i;
                 if(Hashtable[h_p].empty){
-                    if(this->maxLoop<loop){
-                        maxLoop=loop;
-                    }
                     Hashtable[h_p].empty=false;
+                    if(this->maxLoop<loop){
+                        //Hashtable[h_p].empty=false;
+                        maxLoop=loop;
+                        //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    }
+                    //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
                     return h_p;
                 }
-                else if(name.compare(Hashtable[h_p].identifier)==0){
+                else if((name.compare(Hashtable[h_p].identifier)==0)&&(level==Hashtable[h_p].level)){
                     return -1;  //da ton tai
                 }
                 else{
@@ -252,12 +259,16 @@ public:
                 int h_p=(h_k+c1*i+c2*i*i)%capacity;
                 loop=i;
                 if(Hashtable[h_p].empty){
+                    Hashtable[h_p].empty=false;
                     if(this->maxLoop<loop){
+                        //Hashtable[h_p].empty=false;
                         maxLoop=loop;
+                        //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
                     }
+                    //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
                     return h_p;
                 }
-                else if(name.compare(Hashtable[h_p].identifier)==0){
+                else if((name.compare(Hashtable[h_p].identifier)==0)&&(level==Hashtable[h_p].level)){
                     return -1;  //da ton tai
                 }
                 else{
@@ -269,6 +280,210 @@ public:
 
         }
     }
+
+
+
+    int delete_all_identifier_at_level(int &level){
+        int number_deleted=0;
+        char level_temp = level+48;
+        //cout<<"de le te at: "<<level_temp<<endl;
+        size_t position_found=this->level_Hashlist.find_first_of(level_temp,0);
+        
+        //cout<<"hihi---"<<position_found<<endl;
+        while (position_found!=std::string::npos)
+        {
+            number_deleted+=1;
+            Hashtable[position_found].empty=true;   //bat buoc
+            Hashtable[position_found].identifier.clear();
+            Hashtable[position_found].level=0;
+            Hashtable[position_found].type='#';
+            Hashtable[position_found].paranum=0;
+            Hashtable[position_found].signature.clear();
+            level_Hashlist[position_found]='-'; //bat buoc
+            position_found=level_Hashlist.find_first_of(level_temp,position_found+1);
+
+        }
+        
+        cout<<level_Hashlist<<endl;
+        return number_deleted;
+    }
+
+    int lookup_linear(string name,int level){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        
+        for (int i = level; i >=0; i--)
+        {
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h_k=h1(key);
+            for (int j = 0; j <= mxloop; j++)
+            {
+                int h_p=(h_k+c1*i)%capacity;
+                if((Hashtable[h_p].empty==false)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+                else{
+                    continue;
+                }
+            }
+            
+
+        }
+        return -1;
+        
+    }
+
+    // int lookup_linearR(string name,int& level){
+    //     int level_temp=level;
+    //     int mxloop=this->maxLoop;        
+    //     for (int i = level_temp; i >=0; i--)
+    //     {
+    //         level=i;
+    //         U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+    //         int h_k=h1(key);
+    //         for (int j = 0 ; j <mxloop; j++)
+    //         {
+    //             int h_p=(h_k+c1*j)%capacity;
+    //             if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+    //                 return h_p;
+    //             }
+    //             else{
+    //                 continue;
+    //             }
+    //         }          
+    //     }
+    //     return -1;        
+    // }
+
+    int lookup_linearR(string name,int& level){
+        int level_temp=level;
+        int mxloop=this->maxLoop;        
+        for (; level >=0; level--)
+        {
+            //level=level;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,level);
+            int h_k=h1(key);
+            for (int j = 0 ; j <=mxloop; j++)
+            {
+                int h_p=(h_k+c1*j)%capacity;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+                // cout<<"----###-----"<<j<<"-"<<level<<endl;
+                
+            }          
+        }
+        return -1;        
+    }
+
+    int lookup_double(string name,int level){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        for (int i = level_temp; i >=0; i--)
+        {
+            level=i;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h1_k=h1(key);
+            int h2_k=h2(key);
+
+            for (int j = mxloop; j >=0; j--)
+            {
+                int h_p=(h1_k+c1*j*h2_k)%capacity;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+                else{
+                    continue;
+                }
+            }        
+
+        }
+        return -1;         
+    }
+    int lookup_doubleR(string name,int& level){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        for (int i = level_temp; i >=0; i--)
+        {
+            level=i;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h1_k=h1(key);
+            int h2_k=h2(key);
+
+            for (int j = mxloop; j >=0; j--)
+            {
+                int h_p=(h1_k+c1*j*h2_k)%capacity;
+                //cout<<i<<"-"<<j<<"-"<<c1<<"-"<<h1_k<<"-"<<h2_k<<endl;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+                else{
+                    continue;
+                }
+            }        
+
+        }
+        return -1;         
+
+    }
+
+    int lookup_quadratic(string name,int level){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        for (int i = level_temp; i >=0; i--)
+        {
+            level=i;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h_k=h1(key);
+            for (int j = 0; j <= mxloop; j++)
+            {
+                int h_p=(h_k+c1*j+c2*j*j)%capacity;
+                // cout<<level<<"-"<<h_k<<"-"<<h_p<<"-"<<j<<"-"<<c1<<"-"<<c2<<endl;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+            }
+            
+        }
+        return -1;
+        
+    }
+
+    int lookup_quadraticR(string name,int &level){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        for (int i = level_temp; i >=0; i--)
+        {
+            level=i;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h_k=h1(key);
+            for (int j = 0; j <= mxloop; j++)
+            {
+                int h_p=(h_k+c1*j+c2*j*j)%capacity;
+                // cout<<level<<"-"<<h_k<<"-"<<h_p<<"-"<<j<<"-"<<c1<<"-"<<c2<<endl;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+            }
+            
+        }
+        return -1;
+        
+    }
+
+    int lookupR(string name,int &level){
+        if(this->probing=='Q'){
+            return lookup_quadraticR(name,level);
+        }
+        else if(this->probing=='D'){
+            return lookup_doubleR(name,level);
+        }
+        else{
+            return lookup_linearR(name,level);
+        }
+    }
+
+
     
 };
 
@@ -627,7 +842,29 @@ bool identifierrule(string & str){// check name is accept
     return false;
 }
 
-
+string initial_signature(int para){
+    if(para==0){
+        return "#()";
+    }
+    else if(para==1){
+        return "#(#)";
+    }
+    else if(para==2){
+        return "#(#,#)";
+    }
+    else if(para>=3){
+        string temp="#(#";
+        for (int i = 1; i < para; i++)
+        {
+            temp.append(",#");
+        }
+        temp.push_back(')');
+        return temp;
+        
+        // "#(#,#,#)"
+    }
+    return "";
+}
 
 //=========================================================================
 
