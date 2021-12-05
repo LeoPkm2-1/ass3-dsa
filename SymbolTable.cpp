@@ -70,7 +70,8 @@ void SymbolTable::run(string filename)
                             // cout<<hash.level_Hashlist.size()<<endl;
                             // cout<<hash.level_Hashlist<<endl;
                             hash.level_Hashlist[check]=((char)(blockLevel+48));     //them block de check
-                            cout<<hash.level_Hashlist<<endl;        
+                            cout<<hash.level_Hashlist<<endl;  
+                            hash.numofSymbol+=1;      
 
                         }
                         else if(check==-1){ //bien da ton tai
@@ -110,6 +111,8 @@ void SymbolTable::run(string filename)
                             //cout<<"para num: "<<hash.Hashtable[check].paranum<<endl;
                             hash.level_Hashlist[check]=((char)(blockLevel+48));
                             cout<<hash.level_Hashlist<<endl;
+                            hash.numofSymbol+=1;      
+
                         }
                         else if(check==-1){ //bien da ton tai
                            // dong file
@@ -172,7 +175,24 @@ void SymbolTable::run(string filename)
 
                 }
                 else{ //print
-                   cout<<component[0]<<endl;
+                    cout<<component[0]<<endl;
+                    int empty_node=count_CharR(hash.level_Hashlist,'-');
+                    int index=hash.level_Hashlist.find_first_not_of('-');
+                    for (int i = 0; i < hash.numofSymbol; i++)
+                    {
+                        if(i==0){
+                            
+                            cout<<index<<" "<<hash.Hashtable[index].identifier<<"//"<<hash.Hashtable[index].level;
+                        }                       
+                        else{
+                            cout<<";"<<index<<" "<<hash.Hashtable[index].identifier<<"//"<<hash.Hashtable[index].level;
+                        }
+
+                        index=hash.level_Hashlist.find_first_not_of('-',index+1);
+
+                    }
+                    
+
                     
                 }
 

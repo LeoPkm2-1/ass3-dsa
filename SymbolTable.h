@@ -301,6 +301,7 @@ public:
             Hashtable[position_found].signature.clear();
             level_Hashlist[position_found]='-'; //bat buoc
             position_found=level_Hashlist.find_first_of(level_temp,position_found+1);
+            numofSymbol=numofSymbol-1;
 
         }
         
