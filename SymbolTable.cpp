@@ -52,34 +52,86 @@ void SymbolTable::run(string filename)
             if(command_Form_check(line,component,numOfComponent)){  //lệnh dung
 
                 if(component[0].compare("INSERT")==0){
-                    if(numOfComponent==2){
+                    if(numOfComponent==2){  // them bien thuong
                         cout<<component[0]<<"-"<<component[1]<<endl;
-                        string id_symbol(component[1]);
+                        string id_symbol(component[1]); // get identifier
+                        int level_id=blockLevel;
+                        U_KEY_NUM num_key =transfer_Name_to_num_Key(id_symbol,level_id);   //get key(int) from identifer
+                        int loop=0; //the number that loop through
+                        int check=hash.insert_to_hash(num_key,loop,component[1]);   //get slot avaible
+                        if(check>=0){   // da tim thay vi tri
+                            cout<<loop<<"---"<<hash.maxLoop<<"---"<<"check: "<<check<<endl;
+                            //hash.Hashtable[check] =false---- da them trong ham insert
+                            hash.Hashtable[check].identifier=component[1];
+                            hash.Hashtable[check].level=blockLevel;
+                            hash.Hashtable[check].type='#';
+                            hash.Hashtable[check].paranum=0;
+                            // cout<<hash.level_Hashlist.size()<<endl;
+                            // cout<<hash.level_Hashlist<<endl;
+                            hash.level_Hashlist[check]=((char)(blockLevel+48));
+                            // cout<<hash.level_Hashlist<<endl;
 
-                        int num_key =transfer_Name_to_num_Key(id_symbol);
-                        int loop=0;
-                        int check=hash.insert_to_hash(num_key,loop,component[1]);
-                        cout<<"check: "<<check<<endl;
-                        if(check>0) cout<<component[1]<<" have bean lot: ^^"<< check<<endl;
+                        }
                         else if(check==-1){ //bien da ton tai
-                           // myFile.close();  // dong file
-
-
+                           // dong file
+                           myFile.close();  
                             //giai phong vung nho ne
-                            cout<<" co loi m on r"<<endl;
-
+                            cout<<" giai phong vung nho khi khai bao trung ne : -- "<<boolalpha<<hash.releaseMemory()<<endl;
                             // quang loi
                             Redeclared Redeclaredmessage(component[1]);
                             throw Redeclared(component[1]);
 
                         }
-                        else{   //loi bang day
-
+                        else{   //loi overload
+                            // dong file
+                           myFile.close();  
+                            //giai phong vung nho ne
+                            cout<<" giai phong vung nho khi overload ne: -- "<<boolalpha<<hash.releaseMemory()<<endl;
+                            Overflow Overflowmessage(line);
+                            throw Overflow(line);
 
                         }
-                        //hash.insert_to_hash()
-                    }else{
-                         cout<<component[0]<<"-"<<component[1]<<"-"<<component[2]<<endl;
+                        
+                    }else{  // them ham 
+                        cout<<component[0]<<"-"<<component[1]<<"-"<<component[2]<<endl;
+                        string id_symbol(component[1]); // get identifier
+                        int level_id=blockLevel;
+                        U_KEY_NUM num_key =transfer_Name_to_num_Key(id_symbol,level_id);   //get key(int) from identifer
+                        int loop=0; //the number that loop through
+                        int check=hash.insert_to_hash(num_key,loop,component[1]);   //get slot avaible
+                        if(check>=0){       //da tim thay vi tri
+                            cout<<loop<<"---"<<hash.maxLoop<<"---"<<"check: "<<check<<endl;
+                            hash.Hashtable[check].identifier=component[1];
+                            hash.Hashtable[check].level=blockLevel;
+                            hash.Hashtable[check].type='F';
+                            hash.Hashtable[check].paranum=convert_To_NumR(component[2]);
+                            //cout<<"para num: "<<hash.Hashtable[check].paranum<<endl;
+                            hash.level_Hashlist[check]=((char)(blockLevel+48));
+
+                        }
+                        else if(check==-1){ //bien da ton tai
+                           // dong file
+                           myFile.close();  
+                            //giai phong vung nho ne
+                            cout<<" giai phong vung nho khi khai bao trung ne : -- "<<boolalpha<<hash.releaseMemory()<<endl;
+                            // quang loi
+                            Redeclared Redeclaredmessage(component[1]);
+                            throw Redeclared(component[1]);
+
+                        }
+                        else{   //  loi overload
+                            // dong file
+                           myFile.close();  
+                            //giai phong vung nho ne
+                            cout<<" giai phong vung nho khi overload ne: -- "<<boolalpha<<hash.releaseMemory()<<endl;
+                            Overflow Overflowmessage(line);
+                            throw Overflow(line);
+
+                        }
+
+
+
+
                     }
                    
                    
@@ -108,6 +160,7 @@ void SymbolTable::run(string filename)
                 // khi lenh sai tien hanh dong file 
                     myFile.close();   
                 // giai phong toàn bộ vùng nhớ
+                cout<<" giai phong vung nho khi Lệnh sai nè : -- "<<boolalpha<<hash.releaseMemory()<<endl;
 
 
                 //báo lỗi

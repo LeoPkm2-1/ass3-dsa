@@ -152,11 +152,14 @@ int main(){
     // cout<<s.find_first_of('x');
     //cout<<s<<endl;
     //cout<<"0123456789"<<endl;
-    int* a=new int[1];
-    for (int i = 0; i < 5; i++)
-    {
-        cout<<a[i]<<endl;
-    }
+    // int* a=new int[1];
+    // for (int i = 0; i < 5; i++)
+    // {
+    //     cout<<a[i]<<endl;
+    // }
+    string a="0010021234";
+    cout<<convert_To_NumR(a)<<endl;
+    
     
 
     return 0;

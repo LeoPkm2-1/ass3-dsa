@@ -27,12 +27,12 @@ U_KEY_NUM transfer_strKey_to_numKey(string strKEY);
 
 class Symbol{
 public:
-    bool empty;
-    string identifier;
-    int level;
-    char type;
-    int paranum;
-    string signature;
+    bool empty; // indicate this slot is avaible to insert a new symbol to
+    string identifier;  //name of varible which u would like to insert to the slot
+    int level;          //level of of the variable
+    char type;          // type of slot : # - not type, N - number, S -string, F - function
+    int paranum;        // this field is meaningful when type is function and one show number of parameter of funtion
+    string signature;   // this is describe function signature. for example : num(string,num,string): which meaning return type is num and para1: string, para2: num, para3: string
     Symbol(){
         empty=true;
         identifier.clear();
@@ -65,11 +65,21 @@ public:
         c2=0;
 
     }
+
     SymbolHashing(char _probing,int _capacity,int _numofSymbol,int _c1=0,int _c2=0):probing(_probing)
     ,capacity(_capacity),numofSymbol(_numofSymbol),maxLoop(0)
-    ,level_Hashlist(_numofSymbol,'-'),c1(_c1),c2(_c2){
+    ,level_Hashlist(_numofSymbol,'-'),c1(_c1),c2(_c2){}
 
+    bool releaseMemory(){
+        if(Hashtable!=NULL){
+            delete[] Hashtable;
+            Hashtable=NULL;
+            return false;
+        }
+        return true;
+        
     }
+
 protected:
     int h1(U_KEY_NUM key=0){
         int h1_key=(int)(key % capacity);
@@ -189,10 +199,13 @@ public:
                 int h_p=(h_k+c1*i)%capacity;
                 loop=i;
                 if(Hashtable[h_p].empty){
+                    Hashtable[h_p].empty=false;
                     if(this->maxLoop<loop){
-                        Hashtable[h_p].empty=false;
+                        //Hashtable[h_p].empty=false;
                         maxLoop=loop;
+                        //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
                     }
+                    //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
                     return h_p;
                 }
                 else if(name.compare(Hashtable[h_p].identifier)==0){
@@ -256,8 +269,7 @@ public:
 
         }
     }
-
-
+    
 };
 
 
