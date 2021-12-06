@@ -111,7 +111,8 @@ void SymbolTable::run(string filename)
                             //cout<<"para num: "<<hash.Hashtable[check].paranum<<endl;
                             hash.level_Hashlist[check]=((char)(blockLevel+48));
                             cout<<hash.level_Hashlist<<endl;
-                            hash.numofSymbol+=1;      
+                            hash.numofSymbol+=1;    
+                            //cout<<"----"  <<hash.Hashtable[check].signature<<endl;
 
                         }
                         else if(check==-1){ //bien da ton tai
@@ -138,7 +139,152 @@ void SymbolTable::run(string filename)
                                    
                 }
                 else if(component[0].compare("ASSIGN")==0){
+
                     cout<<component[0]<<"-"<<component[1]<<endl;
+                    cout<<"leu leu--------"<<component[2]<<"---------"<<endl;
+                    int check_value_type=check_value(component[2]);
+                    if(check_value_type==1){    // assign with number
+                        int level_found=blockLevel;
+                        int slot_id_find=hash.lookupR(component[0],level_found);
+                        if(slot_id_find==-1){   //ko tim thay bien
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khong tim thay : <<"<<component[0]<< "trong lenh assign -- "<<line<<"--"<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi
+                            Undeclared Undeclaredmessage(component[1]);
+                            throw Undeclared(component[1]);
+                        }
+
+
+                        if(hash.Hashtable[slot_id_find].type=='#'){ // chua co kieu => gan kieu
+                            hash.Hashtable[slot_id_find].type=='N';
+                        }
+                        else if(hash.Hashtable[slot_id_find].type=='S'||hash.Hashtable[slot_id_find].type=='F'){    //kieu ko phai la number =>nem loi
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khong hop kieu voi : <<"<<hash.Hashtable[slot_id_find].type<< "trong lenh assign -- "<<line<<"--"<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi
+                            TypeMismatch TypeMismatchmessage(line);
+                            throw TypeMismatch(line);
+                        }                        
+                        else{
+                            cout<<"assign ok"<<line<<endl;
+                        }
+
+                    }
+                    else if(check_value_type==2){   // assign with string
+                        int level_found=blockLevel;
+                        int slot_id_find=hash.lookupR(component[0],level_found);
+                        if(slot_id_find==-1){   //ko tim thay bien
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khong tim thay : <<"<<component[0]<< "trong lenh assign -- "<<line<<"--"<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi
+                            Undeclared Undeclaredmessage(component[1]);
+                            throw Undeclared(component[1]);
+                        }
+
+                        if(hash.Hashtable[slot_id_find].type=='#'){ // chua co kieu => gan kieu
+                            hash.Hashtable[slot_id_find].type=='S';
+                        }
+                        else if(hash.Hashtable[slot_id_find].type=='N'||hash.Hashtable[slot_id_find].type=='F'){    //kieu ko phai la string =>nem loi
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khong hop kieu voi : <<"<<hash.Hashtable[slot_id_find].type<< "trong lenh assign -- "<<line<<"--"<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi
+                            TypeMismatch TypeMismatchmessage(line);
+                            throw TypeMismatch(line);
+                        }
+                        else{
+                            cout<<"assign ok"<<line<<endl;
+                        }
+
+
+
+                    }
+                    else if(check_value_type==3){   // assign with varible
+                        int level_found=blockLevel;
+                        int slot_val_find=hash.lookupR(component[1],level_found);
+                        if(slot_val_find==-1){   //ko tim thay bien
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khong tim thay : <<"<<component[1]<< "trong lenh assign -- "<<line<<"--"<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi
+                            Undeclared Undeclaredmessage(component[1]);
+                            throw Undeclared(component[1]);
+                        }
+
+                        int slot_id_find=hash.lookupR(component[0],level_found);
+                        if(slot_id_find==-1){   //ko tim thay bien
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khong tim thay : <<"<<component[0]<< "trong lenh assign -- "<<line<<"--"<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi
+                            Undeclared Undeclaredmessage(component[0]);
+                            throw Undeclared(component[0]);
+                        }
+
+                        char type_val=hash.Hashtable[slot_val_find].type;
+                        char type_id =hash.Hashtable[slot_id_find].type;
+                        if(type_val==type_id&&type_id=='#'){  // ca 2 deu chua co kieu
+                            // khi lenh sai tien hanh dong file 
+                            myFile.close();  
+                            // giai phong toàn bộ vùng nhớ
+                            cout<<" giai phong vung nho khi ca 2 deu vo kieu: "<<boolalpha<<hash.releaseMemory()<<endl;
+                            //báo lỗi                            
+                            TypeCannotBeInferred TypeCannotBeInferredmessage(line);
+                            throw TypeCannotBeInferred(line);
+                        }
+                        else if(type_val=='#'){
+                            type_val=type_id;
+                            cout<<"type: "<<type_id<<endl;
+                        }
+                        else if(type_id='#'){
+                            type_id=type_val;
+                            cout<<"type: "<<type_id<<endl;
+                        }
+                        else{
+                            cout<<"assign ok"<<line<<endl;
+                        }
+
+
+
+
+
+                    }
+                    else if(check_value_type==4){   // assign with function
+
+                    }
+                    else {  // wrong
+                        // khi lenh sai tien hanh dong file 
+                        myFile.close();   
+                        // giai phong toàn bộ vùng nhớ
+                        cout<<" giai phong vung nho khi lenh sai : -- "<<boolalpha<<hash.releaseMemory()<<endl;
+                        //báo lỗi
+                        InvalidInstruction InvalidInstructionmessage(line);
+                        throw InvalidInstruction(line);
+                    }
+                    // kiem tra xem bien co ton tai hay khong
+                    // int level_found_1=blockLevel;
+                    // int slot_id_find=hash.lookupR(component[0],level_found_1);
+                    // if(slot_id_find==-1){   //khong tim thay bien
+                    //     // khi lenh sai tien hanh dong file 
+                    //     myFile.close();   
+                    //     // giai phong toàn bộ vùng nhớ
+                    //     cout<<" giai phong vung nho khong tim thay : <<"<<component[1]<< "trong lenh lookup -- "<<boolalpha<<hash.releaseMemory()<<endl;
+                    //     //báo lỗi
+                    //     Undeclared Undeclaredmessage(component[1]);
+                    //     throw Undeclared(component[1]);
+
+                    // }
+
+
                 }
                 else if(component[0].compare("CALL")==0){
                     cout<<component[0]<<"-"<<component[1]<<endl;
@@ -171,10 +317,24 @@ void SymbolTable::run(string filename)
                     int level_found=blockLevel;
                     //int level_found=3;
                     int slot_find=hash.lookupR(component[1],level_found);
-                    cout<<component[1]<<" in slot "<<slot_find<<" at level : "<<level_found<<endl;
+                    if(slot_find==-1){  //khong tim thay
+                        // khi lenh sai tien hanh dong file 
+                        myFile.close();   
+                        // giai phong toàn bộ vùng nhớ
+                        cout<<" giai phong vung nho khong tim thay : <<"<<component[1]<< "trong lenh lookup -- "<<boolalpha<<hash.releaseMemory()<<endl;
+                        //báo lỗi
+                        Undeclared Undeclaredmessage(component[1]);
+                        throw Undeclared(component[1]);
+
+                    }
+                    else{   //tim thay tai slot_find
+                        cout<<component[1]<<" in slot "<<slot_find<<" at level : "<<level_found<<endl;
+
+                    }
+                    // cout<<component[1]<<" in slot "<<slot_find<<" at level : "<<level_found<<endl;
 
                 }
-                else{ //print
+                else{ //PRINT
                     cout<<component[0]<<endl;
                     int empty_node=count_CharR(hash.level_Hashlist,'-');
                     int index=hash.level_Hashlist.find_first_not_of('-');

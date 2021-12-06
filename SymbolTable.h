@@ -24,6 +24,12 @@ bool identifierrule(string & str);
 string transfer_Name_to_str_Key(string name,int level);
 U_KEY_NUM transfer_strKey_to_numKey(string strKEY);
 string initial_signature(int para);
+bool is_string(string str);
+bool is_stringR(string &str);
+bool is_form_function(string);
+int check_value(string);
+
+
 //=========================================================================
 
 class Symbol{
@@ -38,7 +44,7 @@ public:
         empty=true;
         identifier.clear();
         level=0;
-        type='#';   // # chưa có kiểu ,  N : number , S: string, F: hàm
+        type='#';   // # chưa có kiểu ,  N : number , S: string, F: hàm , 
         paranum=0;
         signature.clear();
     }
@@ -499,9 +505,6 @@ public:
 
 
 
-
-
-
 //===============================help function define=====================
 int count_CharR(string& str,char c){
     int times=0;
@@ -512,6 +515,47 @@ int count_CharR(string& str,char c){
 	return times;
 
 }
+
+bool is_form_function(string value){
+    int leng=value.length();
+    if(leng<3){
+        return false;
+    }
+    if((value.find('(')==std::string::npos)||(value.find(')')==std::string::npos)||(value[leng-1]!=')')){
+        return false;
+    }
+    int temp=value.find('(');
+    string id(value,0,temp);
+    return identifierrule(id);    
+}
+
+int check_value(string value){
+    // 0 wrong
+    // 1 number
+    // 2 string
+    // 3 varible
+    // 4 funtion
+   
+    if(is_Number(value)){
+        return 1;
+    }
+    else if(is_stringR(value)){
+        return 2;
+    }
+    else if(identifierrule(value)){
+        return 3;
+    }
+    else if(is_form_function(value)){
+        return 4;
+    }else{
+        return 0;
+
+    }
+
+    
+
+}
+
 int count_Char(string str,char c){
     int times=0;
 	for( unsigned int i =0;i<str.length();i++)
@@ -866,6 +910,69 @@ string initial_signature(int para){
     }
     return "";
 }
+
+bool is_string(string str){
+    int leng=str.length();
+    if(leng<=1) return false;
+    else if(str[0]!='\'' ||str[leng-1]!=str[0]) return false;
+
+    for (int i = 1; i < leng-1; i++)
+    {
+        if(str[i]==' '){
+            continue;
+        }
+        else if(str[i]>=48&&str[i]<=57){
+            continue;
+        }
+        else if(str[i]>=65&&str[i]<=90){
+            continue;
+        }
+        else if(str[i]>=97&&str[i]<=122){
+            continue;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    return true;
+    
+}
+
+bool is_stringR(string &str){
+    int leng=str.length();
+    if(leng<=1) return false;
+    else if(str[0]!='\'' ||str[leng-1]!=str[0]) return false;
+
+    for (int i = 1; i < leng-1; i++)
+    {
+        if(str[i]==' '){
+            continue;
+        }
+        else if(str[i]>=48&&str[i]<=57){
+            continue;
+        }
+        else if(str[i]>=65&&str[i]<=90){
+            continue;
+        }
+        else if(str[i]>=97&&str[i]<=122){
+            continue;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    return true;
+    
+}
+
+
+
+
+
 
 //=========================================================================
 

@@ -141,31 +141,114 @@ bool congfigcheck(string configcommand,int (&configarr)[4]){
 bool command_Form_check(string command, string (&componet)[3],int& numOfComponent);
 bool identifierrule(string & str);
 string initial_signature(int para);
+bool is_string(string str);
+bool is_stringR(string &str);
+bool is_form_function(string value);
+int check_value(string value);
 
 int main(){
 
-    cout<<initial_signature(6)<<endl;
-    // int a=904000;
-    // string s;
-    // s.assign(a,'-');
-    // s[98000]='x';
-    // cout<<s.find_first_of('x');
-    //cout<<s<<endl;
-    //cout<<"0123456789"<<endl;
-    // int* a=new int[1];
-    // for (int i = 0; i < 5; i++)
-    // {
-    //     cout<<a[i]<<endl;
-    // }
-    // string a="0010021234";
-    // cout<<convert_To_NumR(a)<<endl;
-    // int a=5;
-    // char c=a+48;
-    // cout<<c<<endl;
-    
+    string a="'fsad _'";
+     cout<<check_value(a)<<endl;
     
 
     return 0;
+}
+
+int check_value(string value){
+    // 0 wrong
+    // 1 number
+    // 2 string
+    // 3 varible
+    // 4 funtion
+   
+    if(is_Number(value)){
+        return 1;
+    }
+    else if(is_stringR(value)){
+        return 2;
+    }
+    else if(identifierrule(value)){
+        return 3;
+    }
+    else if(is_form_function(value)){
+        return 4;
+    }
+
+    return 0;
+    
+
+}
+
+bool is_form_function(string value){
+    int leng=value.length();
+    if(leng<3){
+        return false;
+    }
+    if((value.find('(')==std::string::npos)||(value.find(')')==std::string::npos)||(value[leng-1]!=')')){
+        return false;
+    }
+    int temp=value.find('(');
+    string id(value,0,temp);
+    return identifierrule(id);    
+}
+
+bool is_stringR(string &str){
+    int leng=str.length();
+    if(leng<=1) return false;
+    else if(str[0]!='\'' ||str[leng-1]!=str[0]) return false;
+
+    for (int i = 1; i < leng-1; i++)
+    {
+        if(str[i]==' '){
+            continue;
+        }
+        else if(str[i]>=48&&str[i]<=57){
+            continue;
+        }
+        else if(str[i]>=65&&str[i]<=90){
+            continue;
+        }
+        else if(str[i]>=97&&str[i]<=122){
+            continue;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    return true;
+    
+}
+
+bool is_string(string str){
+    int leng=str.length();
+    if(leng<=1) return false;
+    else if(str[0]!='\'' ||str[leng-1]!=str[0]) return false;
+
+    for (int i = 1; i < leng-1; i++)
+    {
+        if(str[i]==' '){
+            continue;
+        }
+        else if(str[i]>=48&&str[i]<=57){
+            continue;
+        }
+        else if(str[i]>=65&&str[i]<=90){
+            continue;
+        }
+        else if(str[i]>=97&&str[i]<=122){
+            continue;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    return true;
+    
 }
 
 string initial_signature(int para){
