@@ -28,6 +28,7 @@ bool is_string(string str);
 bool is_stringR(string &str);
 bool is_form_function(string);
 int check_value(string);
+int num_of_arguments(string);
 
 
 //=========================================================================
@@ -81,6 +82,9 @@ public:
         if(Hashtable!=NULL){
             delete[] Hashtable;
             Hashtable=NULL;
+            this->level_Hashlist.clear();
+            //level_Hashlist.clear();
+
             return false;
         }
         return true;
@@ -116,8 +120,6 @@ public:
         }
         return -1;        
     }
-
-
 
     int linear_Probing_i(U_KEY_NUM key,int &loop){
         int h_k=h1(key);
@@ -287,7 +289,99 @@ public:
         }
     }
 
+    int insert_to_hash(U_KEY_NUM key,int &level,int &loop,int& at,string name=""){
 
+        if(this->probing=='L'){ //linear
+            int h_k=h1(key);
+            for (int i = 0; i < capacity; i++)
+            {
+                int h_p=(h_k+c1*i)%capacity;
+                loop=i;
+                if(Hashtable[h_p].empty){
+                    Hashtable[h_p].empty=false;
+                    if(this->maxLoop<loop){
+                        //Hashtable[h_p].empty=false;
+                        maxLoop=loop;
+                        //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    }
+                    //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    at =h_p;
+                    return h_p;
+                }
+                else if((name.compare(Hashtable[h_p].identifier)==0)&&(level==Hashtable[h_p].level)){
+                    at =h_p;
+                    return -1;  //da ton tai
+                }
+                else{
+                    continue;
+                }
+            }
+            return -2;  //over follow           
+
+        }
+        else if(probing=='D'){  //double
+            int h1_k=h1(key);
+            int h2_k=h2(key);
+            for (int i = 0; i < capacity; i++)
+            {
+                int h_p=( h1_k +c1*i*h2_k )%capacity;
+                //cout<<"ret--"<<h1_k<<"-"<<h2_k<<"-"<<i<<"-"<<c1<<"-"<<h_p<<endl;
+                loop=i;
+                // cout<<endl<<"h1: "<<h1_k<<" - "<<"h2: "<<h2_k<<" - c: "<<c1<<" - hp: "<<h_p<<" - level: "<<level<<" - loop: "<<i<<" capacity: "<<capacity<<endl;
+                
+                if(Hashtable[h_p].empty){
+                    Hashtable[h_p].empty=false;
+                    if(this->maxLoop<loop){
+                        //Hashtable[h_p].empty=false;
+                        maxLoop=loop;
+                        //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    }
+                    //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    at =h_p;
+                    return h_p;
+                }
+                else if((name.compare(Hashtable[h_p].identifier)==0)&&(level==Hashtable[h_p].level)){
+                    at =h_p;
+                    return -1;  //da ton tai
+                }
+                else{
+                    continue;
+                }
+            }
+            return -2;  //over follow;
+            
+        }
+        else{   //quadratic
+
+            int h_k=h1(key);
+            for (int i = 0; i < capacity; i++)
+            {
+                int h_p=(h_k+c1*i+c2*i*i)%capacity;
+                loop=i;
+                if(Hashtable[h_p].empty){
+                    Hashtable[h_p].empty=false;
+                    if(this->maxLoop<loop){
+                        //Hashtable[h_p].empty=false;
+                        maxLoop=loop;
+                        //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    }
+                    //cout<<"max loop:"<<maxLoop<<"loop: "<<loop<<endl;
+                    at =h_p;
+                    return h_p;
+                }
+                else if((name.compare(Hashtable[h_p].identifier)==0)&&(level==Hashtable[h_p].level)){
+                    at =h_p;
+                    return -1;  //da ton tai
+                }
+                else{
+                    continue;
+                }
+            }
+            
+            return -2;  //over follow
+
+        }
+    }
 
     int delete_all_identifier_at_level(int &level){
         int number_deleted=0;
@@ -311,7 +405,7 @@ public:
 
         }
         
-        cout<<level_Hashlist<<endl;
+        //cout<<level_Hashlist<<endl;
         return number_deleted;
     }
 
@@ -521,9 +615,33 @@ bool is_form_function(string value){
     if(leng<3){
         return false;
     }
-    if((value.find('(')==std::string::npos)||(value.find(')')==std::string::npos)||(value[leng-1]!=')')){
+    if((value.find('(')==std::string::npos)||(value.find(')')==std::string::npos)||(value[leng-1]!=')')||(count_CharR(value,'(')!=1)||( count_CharR(value,')')!=1 )  ){
         return false;
     }
+    int num_temp=count_CharR(value,',');
+    int num1=value.find('(');
+    int num2=value.find(')');
+    if(num_temp!=0){
+        //int num3=value.find(',');
+        if(value[num1+1]==','||value[num2-1]==','){
+            return false;
+        }
+        
+        if(num_temp>1){
+            for (int i = num1+1; i < num2; i++)
+            {
+                if(value[i]==','&&value[i+1]==',')
+                {
+                    return false;
+                }
+            }
+            
+        }
+
+
+    }
+   
+   
     int temp=value.find('(');
     string id(value,0,temp);
     return identifierrule(id);    
@@ -551,8 +669,7 @@ int check_value(string value){
         return 0;
 
     }
-
-    
+   
 
 }
 
@@ -762,6 +879,30 @@ bool congfigcheck(string &configcommand,int (&configarr)[4]){    //ham2 nay co n
 }
 bool command_Form_check(string command, string (&componet)[3],int& numOfComponent){
     int numSpace=count_CharR(command,' ');
+
+    if(numSpace!=0){    // kiểm tra assign
+        int pos1=command.find(' ');
+        string cmd(command,0,pos1);
+        if(cmd.compare("ASSIGN")==0){ // lenh assign
+            int pos2=command.find(' ',pos1+1);
+            string id(command,pos1+1,pos2-pos1-1);
+            if(identifierrule(id)){
+                string value(command,pos2+1);
+                componet[0]=cmd;
+                componet[1]=id;
+                componet[2]=value;
+                // cout<<"day la assign"<<endl;
+                // cout<<cmd<<"==="<<id<<"==="<<value<<endl;
+                return true;
+
+
+            }else{
+                return false;
+            }
+        }
+        
+        
+    }
     if(numSpace>2){
         return false;
     }
@@ -836,20 +977,20 @@ bool command_Form_check(string command, string (&componet)[3],int& numOfComponen
             }
             return false;
         }
-        else if(cmd_temp.compare("ASSIGN")==0){
-            int temp2=command.find_last_of(' ');
-            string iden_temp=command.substr(temp1+1,temp2-temp1-1);
-            if(identifierrule(iden_temp)){               
-                string value=command.substr(temp2+1);
-                componet[0]=cmd_temp;
-                componet[1]=iden_temp;
-                componet[2]=value;
-                numOfComponent=3;
-                return true;
+        // else if(cmd_temp.compare("ASSIGN")==0){
+        //     int temp2=command.find_last_of(' ');
+        //     string iden_temp=command.substr(temp1+1,temp2-temp1-1);
+        //     if(identifierrule(iden_temp)){               
+        //         string value=command.substr(temp2+1);
+        //         componet[0]=cmd_temp;
+        //         componet[1]=iden_temp;
+        //         componet[2]=value;
+        //         numOfComponent=3;
+        //         return true;
 
-            }
-            return false;
-        }
+        //     }
+        //     return false;
+        // }
         return false;
     }
     return false;
@@ -970,7 +1111,21 @@ bool is_stringR(string &str){
 }
 
 
+int num_of_arguments(string str){
+    int pos1=str.find('(');
+    int pos2=str.find_last_of(')');
+    int result=0;
+    int temp=count_CharR(str,',');
 
+    if(pos1+1==pos2){
+       // result 0;
+    }
+    else{
+        result=temp+1;
+    }
+    return result;
+    
+}
 
 
 

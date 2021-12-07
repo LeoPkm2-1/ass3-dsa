@@ -145,15 +145,65 @@ bool is_string(string str);
 bool is_stringR(string &str);
 bool is_form_function(string value);
 int check_value(string value);
+int num_of_arguments(string);
+
+
 
 int main(){
 
-    string a="'fsad _'";
-     cout<<check_value(a)<<endl;
+    // cout<<boolalpha<<is_form_function("a('232 fdsa',a())")<<endl;
+    string a("ahihi(xin,ahihi,leueleu,hehe)");
+    int num1=a.find('(');
+    int num2=a.find(',');
+    int num_te=num2;
+    int num3=a.find(')');
+    // string temp(a,num1+1,num2-num1-1);
+    // cout<<"---"<<temp<<"---"<<endl;
+    int numofargu=num_of_arguments(a);
+    string arr[numofargu];
+    for (int i = 0; i < numofargu; i++)
+    {
+        if(i==0){   // tham so thu nhat
+            arr[i]=a.substr(num1+1,num2-num1-1);
+            continue;
+        }
+        else if(i==numofargu-1){
+            arr[i]=a.substr(num2+1,num3-num2-1);
+            continue;
+        }
+        num_te=num2;
+        num2=a.find(',',num2+1);
+        arr[i]=a.substr(num_te+1,num2-num_te-1);
+    }
+
+    for (int i = 0; i < numofargu; i++)
+    {
+       cout<<"---"<<arr[i]<<"---"<<endl;
+    }
     
+    
+
 
     return 0;
 }
+
+
+int num_of_arguments(string str){
+    int pos1=str.find('(');
+    int pos2=str.find_last_of(')');
+    int result=0;
+    int temp=count_CharR(str,',');
+
+    if(pos1+1==pos2){
+       // result 0;
+    }
+    else{
+        result=temp+1;
+    }
+    return result;
+    
+}
+
 
 int check_value(string value){
     // 0 wrong
@@ -185,12 +235,36 @@ bool is_form_function(string value){
     if(leng<3){
         return false;
     }
-    if((value.find('(')==std::string::npos)||(value.find(')')==std::string::npos)||(value[leng-1]!=')')){
+    if((value.find('(')==std::string::npos)||(value.find(')')==std::string::npos)||(value[leng-1]!=')')||(count_CharR(value,'(')!=1)||( count_CharR(value,')')!=1 )  ){
         return false;
     }
+    int num_temp=count_CharR(value,',');
+    int num1=value.find('(');
+    int num2=value.find(')');
+    if(num_temp!=0){
+        //int num3=value.find(',');
+        if(value[num1+1]==','||value[num2-1]==','){
+            return false;
+        }
+        
+        if(num_temp>1){
+            for (int i = num1+1; i < num2; i++)
+            {
+                if(value[i]==','&&value[i+1]==',')
+                {
+                    return false;
+                }
+            }
+            
+        }
+
+
+    }
+   
+   
     int temp=value.find('(');
     string id(value,0,temp);
-    return identifierrule(id);    
+    return identifierrule(id); 
 }
 
 bool is_stringR(string &str){
