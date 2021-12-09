@@ -1223,6 +1223,49 @@ void SymbolTable::run(string filename)
                 
                 else if(component[0].compare("CALL")==0){
                     cout<<component[0]<<"-"<<component[1]<<endl;
+                        
+                    int call_exp_type=check_value(component[1]);
+                    
+                    if(call_exp_type==4){   // type is function call => ok
+                        int name_lengh_temp=component[1].find('(');
+                        string functionname(component[1],0,name_lengh_temp);
+                        int level_function_found=blockLevel;
+                        int slot_function_found=hash.lookupR(functionname,level_function_found);
+                        if(slot_function_found==-1){    //ko tim thay ham
+                            // close file
+                            myFile.close();   
+                            cout<<" // ------ function: "<<functionname <<" is not found."<<endl;
+                            cout<<" // ------ release memory: "<<boolalpha<<hash.releaseMemory()<<endl;
+                            // show error
+                            Undeclared Undeclaredmessage(functionname);
+                            throw Undeclared(functionname);
+                        }
+
+                        if(hash.Hashtable[slot_function_found].type!='F'){
+
+                        }
+
+
+
+                    }
+                    else{   // type is not function call => wrong
+                        cout<<" ------ cau lenh call sai cmnr"<<endl;
+                        myFile.close();
+                        //release memory
+                        cout<<"// ------release "<<boolalpha<<hash.releaseMemory()<<endl;
+                        
+                        InvalidInstruction InvalidInstructionmessage(line);
+                        throw InvalidInstruction(line);
+                    }
+
+                        
+
+
+
+
+
+
+
                 }
                 else if(component[0].compare("BEGIN")==0){
                     cout<<(++the_number)<<"---"<<component[0];//<<"-"<<component[1]<<endl;
