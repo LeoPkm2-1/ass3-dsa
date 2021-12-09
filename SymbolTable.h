@@ -894,12 +894,30 @@ bool command_Form_check(string command, string (&componet)[3],int& numOfComponen
                 componet[2]=value;
                 // cout<<"day la assign"<<endl;
                 // cout<<cmd<<"==="<<id<<"==="<<value<<endl;
+                numOfComponent=3;
                 return true;
 
 
             }else{
                 return false;
             }
+        }
+        else if(cmd.compare("CALL")==0){    //lenh call
+            componet[0]=cmd;
+            int temp=command.find_first_of('(');
+            if(temp<=pos1+1){
+                return false;
+            }
+            string id=command.substr(pos1+1,temp-pos1-1);
+            if(identifierrule(id)){
+                componet[1]=command.substr(pos1+1);
+                numOfComponent=2;
+                return true;
+            }else{
+                return false;
+            }
+
+
         }
         
         
@@ -947,13 +965,13 @@ bool command_Form_check(string command, string (&componet)[3],int& numOfComponen
             return false;
 
         }
-        else if(cmd_temp.compare("CALL")==0){
-            componet[0]=cmd_temp;
-            componet[1]=command.substr(temp1+1);
-            numOfComponent=2;
-            return true;
+        // else if(cmd_temp.compare("CALL")==0){
+        //     componet[0]=cmd_temp;
+        //     componet[1]=command.substr(temp1+1);
+        //     numOfComponent=2;
+        //     return true;
 
-        }
+        // }
         else{
             return false;
         }
