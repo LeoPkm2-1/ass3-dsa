@@ -932,6 +932,9 @@ bool congfigcheck(string &configcommand,int (&configarr)[4]){    //ham2 nay co n
                 configarr[3]=convert_To_NumR(c2);
 
             }
+            else{
+                return false;
+            }
 
 
 

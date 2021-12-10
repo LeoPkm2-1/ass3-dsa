@@ -13,8 +13,9 @@ void SymbolTable::run(string filename)
     int blockLevel=0;
     SymbolHashing hash;
     int the_number=0;
-    while (getline(myFile,line))        //dùng vòng lặp để đọc file sau đó dòng đọc dc sẽ dc lưu trong biến line 
-    {               
+    while (!myFile.eof())        //dùng vòng lặp để đọc file sau đó dòng đọc dc sẽ dc lưu trong biến line 
+    {      
+        getline(myFile,line);         
         if(hash_config){    //dòng đầu tiên luôn là dòng config hash 
             hash_config=false;
             //cout<< "lenh hash: "<<endl; //xoa---
