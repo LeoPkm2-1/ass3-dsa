@@ -203,6 +203,7 @@ public:
 
     }
 
+    // insert ok
     int insert_to_hash(U_KEY_NUM key,int &level,int &loop,string name=""){
 
         if(this->probing=='L'){ //linear
@@ -289,6 +290,7 @@ public:
         }
     }
 
+    // insert ok
     int insert_to_hash(U_KEY_NUM key,int &level,int &loop,int& at,string name=""){
 
         if(this->probing=='L'){ //linear
@@ -477,6 +479,28 @@ public:
         return -1;        
     }
 
+    int lookup_linearR(string name,int& level,int &loop){
+        int level_temp=level;
+        int mxloop=this->maxLoop;        
+        for (; level >=0; level--)
+        {
+            //level=level;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,level);
+            int h_k=h1(key);
+            for (int j = 0 ; j <=mxloop; j++)
+            {
+                loop=j;
+                int h_p=(h_k+c1*j)%capacity;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+                // cout<<"----###-----"<<j<<"-"<<level<<endl;
+                
+            }          
+        }
+        return -1;        
+    }
+
     int lookup_double(string name,int level){
         int level_temp=level;
         int mxloop=this->maxLoop;
@@ -584,6 +608,18 @@ public:
         }
     }
 
+
+    int lookupR(string name,int &level,int &loop){
+        if(this->probing=='Q'){
+            return lookup_quadraticR(name,level);
+        }
+        else if(this->probing=='D'){
+            return lookup_doubleR(name,level);
+        }
+        else{
+            return lookup_linearR(name,level,loop);
+        }
+    }
 
     
 };

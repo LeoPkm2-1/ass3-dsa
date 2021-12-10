@@ -239,8 +239,9 @@ void SymbolTable::run(string filename)
                     if(assign_value_type==1||assign_value_type==2){ 
                         //cout<<"------- assign is string or number : "<<component[2]<<endl;
                         int level_found=blockLevel; // level found identifier
-                        int slot_id_found=hash.lookupR(component[1],level_found);   // where identifier in block
-                        
+                        int loop=0;
+                        int slot_id_found=hash.lookupR(component[1],level_found,loop);   // where identifier in block
+                        //cout<<" - loop: "<<loop;
                         if(slot_id_found==-1){ //not found identifier
                             myFile.close(); // dong file 
                             // giai phong bo nho
@@ -252,14 +253,14 @@ void SymbolTable::run(string filename)
                         // found identifier
                         if(hash.Hashtable[slot_id_found].type=='#'){    // identifier don't have type 
                             hash.Hashtable[slot_id_found].type=(assign_value_type==1)?'N':'S';  // assign type 
-                            cout<<" // ----- bien "<<hash.Hashtable[slot_id_found].identifier<<" - level: "<<hash.Hashtable[slot_id_found].level<<" - at slot: "<<slot_id_found<<" - da dc suy dien kieu la: "<<hash.Hashtable[slot_id_found].type<<endl;
+                            cout<<" // ----- bien "<<hash.Hashtable[slot_id_found].identifier<<" - loop: "<<loop<<" - level: "<<hash.Hashtable[slot_id_found].level<<" - at slot: "<<slot_id_found<<" - da dc suy dien kieu la: "<<hash.Hashtable[slot_id_found].type<<endl;
                         }
                         else if(hash.Hashtable[slot_id_found].type=='N'&&assign_value_type==1){ //both is number => ok
-                            cout<<" // ------ gan hop le bien: "<<hash.Hashtable[slot_id_found].identifier<<" - level: "<<hash.Hashtable[slot_id_found].level<<" - at slot: "<<slot_id_found<<endl;
+                            cout<<" // ------ gan hop le bien: "<<hash.Hashtable[slot_id_found].identifier<<" - loop: "<<loop<<" - level: "<<hash.Hashtable[slot_id_found].level<<" - at slot: "<<slot_id_found<<endl;
                             cout<<" // ------"<<hash.Hashtable[slot_id_found].type<<" -vs- N"<<endl;
                         }
                         else if(hash.Hashtable[slot_id_found].type=='S'&&assign_value_type==2){ //both is string => ok
-                            cout<<" // ------ gan hop le bien: "<<hash.Hashtable[slot_id_found].identifier<<" - level: "<<hash.Hashtable[slot_id_found].level<<" - at slot: "<<slot_id_found<<endl;
+                            cout<<" // ------ gan hop le bien: "<<hash.Hashtable[slot_id_found].identifier<<" - loop: "<<loop<<" - level: "<<hash.Hashtable[slot_id_found].level<<" - at slot: "<<slot_id_found<<endl;
                             cout<<" // ------"<<hash.Hashtable[slot_id_found].type<<" -vs- S"<<endl;
                         }
                         else{   // khong hop kieu
@@ -279,7 +280,10 @@ void SymbolTable::run(string filename)
                     else if(assign_value_type==3){  
                         // cout<<"------- assign is varible: "<<component[2]<<endl;                        
                         int level_val_find=blockLevel; // level found variable 
-                        int slot_val_find = hash.lookupR(component[2],level_val_find);  // where varible is hash
+                        int loop_val=0;
+                        int slot_val_find = hash.lookupR(component[2],level_val_find,loop_val);  // where varible is hash
+                        // cout<<" - loop: "<<loop;
+
 
                         if(slot_val_find==-1){  // not found varible
                             // close file
@@ -303,7 +307,8 @@ void SymbolTable::run(string filename)
 
                         
                         int level_id_find=blockLevel;
-                        int slot_id_find=hash.lookupR(component[1],level_id_find);
+                        int loop_id=0;
+                        int slot_id_find=hash.lookupR(component[1],level_id_find,loop_id);
                         if(slot_id_find==-1){  // not found identifier
                             // close file
                             myFile.close();
@@ -325,7 +330,7 @@ void SymbolTable::run(string filename)
                             TypeMismatch TypeMismatchmessage(line);
                             throw TypeMismatch(line);
                         }
-
+                        //cout<<" - loop: "<<loop;
                         // both identifier and varible is found => compare type
                         char val_type=hash.Hashtable[slot_val_find].type;
                         char id_type=hash.Hashtable[slot_id_find].type;
@@ -341,23 +346,23 @@ void SymbolTable::run(string filename)
                         }
                         else if(val_type==id_type&&id_type!='F'){   // same type => ok  note: cai nay co the bo cai id_type !='F' đi nha
                             cout<<" //------ gan kieu hop le: "<<hash.Hashtable[slot_id_find].type<<" -vs- "<<hash.Hashtable[slot_val_find].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_id_find].identifier<<" - level: "<<hash.Hashtable[slot_id_find].level<<" -at slot: "<<slot_id_find<<" -type: "<<hash.Hashtable[slot_id_find].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_val_find].identifier<<" - level: "<<hash.Hashtable[slot_val_find].level<<" -at slot: "<<slot_val_find<<" -type: "<<hash.Hashtable[slot_val_find].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_id_find].identifier<<" - loop: "<<loop_id<<" - level: "<<hash.Hashtable[slot_id_find].level<<" -at slot: "<<slot_id_find<<" -type: "<<hash.Hashtable[slot_id_find].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_val_find].identifier<<" - loop: "<<loop_val<<" - level: "<<hash.Hashtable[slot_val_find].level<<" -at slot: "<<slot_val_find<<" -type: "<<hash.Hashtable[slot_val_find].type<<endl;
                         }
                         else if(id_type=='#'&&val_type!='#'&&val_type!='F'){    // identifier  don't have type note: cai nay co the bo cai val_type!='F' đi nha
                             cout<<" // ------ before: "<<hash.Hashtable[slot_id_find].type<<" -vs- "<<hash.Hashtable[slot_val_find].type<<endl;
                             hash.Hashtable[slot_id_find].type=hash.Hashtable[slot_val_find].type;
                             cout<<" // ------ after: "<<hash.Hashtable[slot_id_find].type<<" -vs- "<<hash.Hashtable[slot_val_find].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_id_find].identifier<<" -level: "<<hash.Hashtable[slot_id_find].level<<" -at slot: "<<slot_id_find<<" -type: "<<hash.Hashtable[slot_id_find].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_val_find].identifier<<" -level: "<<hash.Hashtable[slot_val_find].level<<" -at slot: "<<slot_val_find<<" -type: "<<hash.Hashtable[slot_val_find].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_id_find].identifier<<" - loop: "<<loop_id<<" -level: "<<hash.Hashtable[slot_id_find].level<<" -at slot: "<<slot_id_find<<" -type: "<<hash.Hashtable[slot_id_find].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_val_find].identifier<<" - loop: "<<loop_val<<" -level: "<<hash.Hashtable[slot_val_find].level<<" -at slot: "<<slot_val_find<<" -type: "<<hash.Hashtable[slot_val_find].type<<endl;
 
                         }
                         else if(val_type=='#'&&id_type!='#'&&id_type!='F'){ // varible  don't have type note: cai nay co the bo cai id_type !='F' đi nha
                             cout<<" // ------ before: "<<hash.Hashtable[slot_id_find].type<<" -vs- "<<hash.Hashtable[slot_val_find].type<<endl;
                             hash.Hashtable[slot_val_find].type=hash.Hashtable[slot_id_find].type;
                             cout<<" // ------ after: "<<hash.Hashtable[slot_id_find].type<<" -vs- "<<hash.Hashtable[slot_val_find].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_id_find].identifier<<" -level: "<<hash.Hashtable[slot_id_find].level<<" -at slot: "<<slot_id_find<<" -type: "<<hash.Hashtable[slot_id_find].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_val_find].identifier<<" -level: "<<hash.Hashtable[slot_val_find].level<<" -at slot: "<<slot_val_find<<" -type: "<<hash.Hashtable[slot_val_find].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_id_find].identifier<<" - loop: "<<loop_id<<" -level: "<<hash.Hashtable[slot_id_find].level<<" -at slot: "<<slot_id_find<<" -type: "<<hash.Hashtable[slot_id_find].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_val_find].identifier<<" - loop: "<<loop_val<<" -level: "<<hash.Hashtable[slot_val_find].level<<" -at slot: "<<slot_val_find<<" -type: "<<hash.Hashtable[slot_val_find].type<<endl;
                         }
                         else{   // types are different
                             //close file
@@ -381,7 +386,8 @@ void SymbolTable::run(string filename)
                         int name_lengh_temp=component[2].find('(');
                         string functionname(component[2],0,name_lengh_temp);
                         int level_function_found=blockLevel;
-                        int slot_function_found=hash.lookupR(functionname,level_function_found);
+                        int loop_func=0;
+                        int slot_function_found=hash.lookupR(functionname,level_function_found,loop_func);
                         if(slot_function_found==-1){    //ko tim thay ham
                             // close file
                             myFile.close();   
@@ -403,7 +409,7 @@ void SymbolTable::run(string filename)
                         }
 
 
-
+                        
                         // tim thay ham
                         // chi thuc hien set so luong tham so truyen vao, tinh hop le cua cac tham so so voi doi so=> chua kiem tra kieu tra ve cua ham, voi lai chua tim identifier, va xet kieu tra ve cua no
                         // kiem tra tinh hop le cua tham so
@@ -452,7 +458,8 @@ void SymbolTable::run(string filename)
 
                             else if(argu_type==3){  // tham so duy nhat la bien
                                 int level_id_found=blockLevel;
-                                int slot_id_found=hash.lookupR(argument,level_id_found);
+                                int loop_arg=0;
+                                int slot_id_found=hash.lookupR(argument,level_id_found,loop_arg);
                                 if(slot_id_found==-1){  // ko tim thay bien trong tham so duy nhat
                                     // close file
                                     myFile.close();   
@@ -478,6 +485,9 @@ void SymbolTable::run(string filename)
 
                                 }
 
+
+                                
+
                                 // bien truyen vao co kieu khac ham
                                 char argu_type=hash.Hashtable[slot_id_found].type;
                                 char para_type=hash.Hashtable[slot_function_found].signature[2];
@@ -488,13 +498,13 @@ void SymbolTable::run(string filename)
                                         cout<<"--- before: "<<hash.Hashtable[slot_function_found].signature<<endl;
                                         cout<<" // ---- tham so duy nhat chua co kieu nen se dc suy theo kieu cua doi so truyen vao:";
                                         hash.Hashtable[slot_function_found].signature[2]=(argu_type=='N')?'N':'S';
-                                        cout<<" // ----- "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                        cout<<" // ----- "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                     else if(hash.Hashtable[slot_function_found].signature[2]=='N'&&argu_type==1){   // tham so duy nhay co kieu num va doi so cung la num
-                                        cout<<" // ------ "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                        cout<<" // ------ hop le: "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                     else if(hash.Hashtable[slot_function_found].signature[2]=='S'&&argu_type==2){   // tham so duy nhay co kieu string va doi so cung la string
-                                        cout<<" // ------ "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                        cout<<" // ------ hop le: "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                     else{   // tham so duy nhat va doi so khong hop kieu
                                         // dong file
@@ -520,7 +530,7 @@ void SymbolTable::run(string filename)
                                     else{   // parameter have type => argument will be type of parameter
                                         cout<<" //------ before: "<<hash.Hashtable[slot_id_found].type<<" -> "<<hash.Hashtable[slot_function_found].signature[2];
                                         hash.Hashtable[slot_id_found].type=hash.Hashtable[slot_function_found].signature[2];
-                                        cout<<" //------ after: "<<hash.Hashtable[slot_id_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2];
+                                        cout<<" //------ after: "<<hash.Hashtable[slot_id_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2]<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                 }
 
@@ -609,7 +619,8 @@ void SymbolTable::run(string filename)
                                 
                                 else if(argu_type==3){  // tham so thu i la bien
                                     int level_argu_found=blockLevel;
-                                    int slot_argu_found=hash.lookupR(argument_arr[i],level_argu_found);
+                                    int loop_arg_i=0;
+                                    int slot_argu_found=hash.lookupR(argument_arr[i],level_argu_found,loop_arg_i);
                                     if(slot_argu_found==-1){  // ko tim thay bien trong tham so thu i
                                         // close file
                                         myFile.close();   
@@ -634,6 +645,8 @@ void SymbolTable::run(string filename)
 
                                     }
 
+                                    //cout<<" - loop: "<<loop;
+
                                     // bien truyen vao co kieu khac ham
                                     char argu_type_=hash.Hashtable[slot_argu_found].type;
                                     char para_type_=hash.Hashtable[slot_function_found].signature[2*i+2];
@@ -644,15 +657,15 @@ void SymbolTable::run(string filename)
                                             cout<<" // ---- tham so thu "<<i<<" chua co kieu nen se dc suy theo kieu cua doi so truyen vao:";
                                             cout<<" // ----- "<<((argu_type_=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<endl;
                                             hash.Hashtable[slot_function_found].signature[2*i+2]=(argu_type_=='N')?'N':'S';
-                                            cout<<"--- after: "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                            cout<<"--- after: "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg_i: "<<loop_arg_i<<endl;
                                         }
                                         else if(hash.Hashtable[slot_function_found].signature[2*i+2]=='N'&&argu_type_=='N'){ // tham so thu i co kieu num va doi so cung la num
                                             cout<<" // ------ hop le: "<<((argu_type_=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<endl;
-                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg_i: "<<loop_arg_i<<endl;
                                         }
                                         else if(hash.Hashtable[slot_function_found].signature[2*i+2]=='S'&&argu_type_=='S'){ // tham so thu i co kieu string va doi so cung la string
                                             cout<<" // ------ hop le: "<<((argu_type_=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<endl;
-                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg_i: "<<loop_arg_i<<endl;
                                         }
                                         else{   // tham so duy nhat va doi so khong hop kieu
                                             // dong file
@@ -682,7 +695,7 @@ void SymbolTable::run(string filename)
                                         else{   // parameter have type => argument will be type of parameter
                                             cout<<" //------ before: "<<hash.Hashtable[slot_argu_found].type<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2];
                                             hash.Hashtable[slot_argu_found].type=hash.Hashtable[slot_function_found].signature[2*i+2];
-                                            cout<<" //------ after: "<<hash.Hashtable[slot_argu_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2*i+2];
+                                            cout<<" //------ after: "<<hash.Hashtable[slot_argu_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<" - loop_arg_i: "<<loop_arg_i;
                                         }
 
                                     }
@@ -721,7 +734,8 @@ void SymbolTable::run(string filename)
 
                         // so sanh kieu cua ten6 ham voi id
                         int level_id_found=blockLevel;
-                        int slot_id_found=hash.lookupR(component[1],level_id_found);        // tim kiem bien id trogn lenh assign
+                        int loop_id=0;
+                        int slot_id_found=hash.lookupR(component[1],level_id_found,loop_id);        // tim kiem bien id trogn lenh assign
                         if(slot_id_found==-1){  // not found identifier
                             // close file
                             myFile.close();
@@ -742,6 +756,8 @@ void SymbolTable::run(string filename)
                             throw TypeMismatch(line);
                         }
 
+                        //cout<<" - loop: "<<loop_id;
+                        
                         char func_type_assign=hash.Hashtable[slot_function_found].signature[0];  // luu kieu tra ve cua ham
                         char id_type_assign=hash.Hashtable[slot_id_found].type;
                         // cout<<" kieu tra ve: "<<hash.Hashtable[slot_id_found].identifier<<" --vs-- "<<hash.Hashtable[slot_function_found].identifier<<endl;
@@ -760,22 +776,22 @@ void SymbolTable::run(string filename)
                         }
                         else if(func_type_assign==id_type_assign&&id_type_assign!='F'){   // same type => ok
                             cout<<" //------ gan kieu hop le: "<<hash.Hashtable[slot_id_found].type<<" -vs- "<<hash.Hashtable[slot_function_found].signature<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_id_found].identifier<<" - level: "<<hash.Hashtable[slot_id_found].level<<" -at slot: "<<slot_id_found<<" -type: "<<hash.Hashtable[slot_id_found].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_function_found].identifier<<" - level: "<<hash.Hashtable[slot_function_found].level<<" -at slot: "<<slot_function_found<<" -type: "<<hash.Hashtable[slot_function_found].signature<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_id_found].identifier<<" - loop_id: "<<loop_id<<" - level: "<<hash.Hashtable[slot_id_found].level<<" -at slot: "<<slot_id_found<<" -type: "<<hash.Hashtable[slot_id_found].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_function_found].identifier<<" - loop_func: "<<loop_func<<" - level: "<<hash.Hashtable[slot_function_found].level<<" -at slot: "<<slot_function_found<<" -type: "<<hash.Hashtable[slot_function_found].signature<<endl;
                         }
                         else if(id_type_assign=='#'&&func_type_assign!='#'&&func_type_assign!='V'){
                             cout<<" // ------ before: "<<hash.Hashtable[slot_id_found].type<<" -vs- "<<hash.Hashtable[slot_function_found].signature<<endl;
                             hash.Hashtable[slot_id_found].type=hash.Hashtable[slot_function_found].signature[0];
                             cout<<" // ------ after: "<<hash.Hashtable[slot_id_found].type<<" -vs- "<<hash.Hashtable[slot_function_found].signature<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_id_found].identifier<<" -level: "<<hash.Hashtable[slot_id_found].level<<" -at slot: "<<slot_id_found<<" -type: "<<hash.Hashtable[slot_id_found].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_function_found].identifier<<" -level: "<<hash.Hashtable[slot_function_found].level<<" -at slot: "<<slot_function_found<<" -type: "<<hash.Hashtable[slot_function_found].signature<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_id_found].identifier<<" - loop_id: "<<loop_id<<" -level: "<<hash.Hashtable[slot_id_found].level<<" -at slot: "<<slot_id_found<<" -type: "<<hash.Hashtable[slot_id_found].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_function_found].identifier<<" - loop_func: "<<loop_func<<" -level: "<<hash.Hashtable[slot_function_found].level<<" -at slot: "<<slot_function_found<<" -type: "<<hash.Hashtable[slot_function_found].signature<<endl;
                         }
                         else if(func_type_assign=='#'&&id_type_assign!='#'&&id_type_assign!='F'){ // varible  don't have type
                             cout<<" // ------ before: "<<hash.Hashtable[slot_id_found].type<<" -vs- "<<hash.Hashtable[slot_function_found].signature<<endl;
                             hash.Hashtable[slot_function_found].signature[0]=hash.Hashtable[slot_id_found].type;
                             cout<<" // ------ after: "<<hash.Hashtable[slot_id_found].type<<" -vs- "<<hash.Hashtable[slot_function_found].signature<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_id_found].identifier<<" -level: "<<hash.Hashtable[slot_id_found].level<<" -at slot: "<<slot_id_found<<" -type: "<<hash.Hashtable[slot_id_found].type<<endl;
-                            cout<<" // ---- "<<hash.Hashtable[slot_function_found].identifier<<" -level: "<<hash.Hashtable[slot_function_found].level<<" -at slot: "<<slot_function_found<<" -type: "<<hash.Hashtable[slot_function_found].signature<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_id_found].identifier<<" - loop_id: "<<loop_id<<" -level: "<<hash.Hashtable[slot_id_found].level<<" -at slot: "<<slot_id_found<<" -type: "<<hash.Hashtable[slot_id_found].type<<endl;
+                            cout<<" // ---- "<<hash.Hashtable[slot_function_found].identifier<<" - loop_func: "<<loop_func<<" -level: "<<hash.Hashtable[slot_function_found].level<<" -at slot: "<<slot_function_found<<" -type: "<<hash.Hashtable[slot_function_found].signature<<endl;
                         }
                         else{   // types are different
                             //close file
@@ -1237,7 +1253,8 @@ void SymbolTable::run(string filename)
                         int name_lengh_temp=component[1].find('(');
                         string functionname(component[1],0,name_lengh_temp);
                         int level_function_found=blockLevel;
-                        int slot_function_found=hash.lookupR(functionname,level_function_found);
+                        int loop_func=0;
+                        int slot_function_found=hash.lookupR(functionname,level_function_found,loop_func);
                         if(slot_function_found==-1){    //ko tim thay ham
                             // close file
                             myFile.close();   
@@ -1256,6 +1273,8 @@ void SymbolTable::run(string filename)
                             TypeMismatch TypeMismatchmessage(line);
                             throw TypeMismatch(line);
                         }
+
+                        //cout<<" - loop: "<<loop;
 
                         int num_of_para=hash.Hashtable[slot_function_found].paranum; // so luong tham so
                         int num_of_argu=num_of_arguments(component[1]); // so luong doi so truyen vao ham
@@ -1302,7 +1321,8 @@ void SymbolTable::run(string filename)
 
                             else if(argu_type==3){  // tham so duy nhat la bien
                                 int level_id_found=blockLevel;
-                                int slot_id_found=hash.lookupR(argument,level_id_found);
+                                int loop_arg=0;
+                                int slot_id_found=hash.lookupR(argument,level_id_found,loop_arg);
                                 if(slot_id_found==-1){  // ko tim thay bien trong tham so duy nhat
                                     // close file
                                     myFile.close();   
@@ -1328,6 +1348,9 @@ void SymbolTable::run(string filename)
 
                                 }
 
+
+                                // cout<<" - loop: "<<loop;
+
                                 // bien truyen vao co kieu khac ham
                                 char argu_type=hash.Hashtable[slot_id_found].type;
                                 char para_type=hash.Hashtable[slot_function_found].signature[2];
@@ -1338,13 +1361,13 @@ void SymbolTable::run(string filename)
                                         cout<<"--- before: "<<hash.Hashtable[slot_function_found].signature<<endl;
                                         cout<<" // ---- tham so duy nhat chua co kieu nen se dc suy theo kieu cua doi so truyen vao:";
                                         hash.Hashtable[slot_function_found].signature[2]=(argu_type=='N')?'N':'S';
-                                        cout<<" // ----- "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                        cout<<" // ----- "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                     else if(hash.Hashtable[slot_function_found].signature[2]=='N'&&argu_type==1){   // tham so duy nhay co kieu num va doi so cung la num
-                                        cout<<" // ------ "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                        cout<<" // ------ "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                     else if(hash.Hashtable[slot_function_found].signature[2]=='S'&&argu_type==2){   // tham so duy nhay co kieu string va doi so cung la string
-                                        cout<<" // ------ "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                        cout<<" // ------ "<<((argu_type=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg: "<<loop_arg<<endl;
                                     }
                                     else{   // tham so duy nhat va doi so khong hop kieu
                                         // dong file
@@ -1370,7 +1393,7 @@ void SymbolTable::run(string filename)
                                     else{   // parameter have type => argument will be type of parameter
                                         cout<<" //------ before: "<<hash.Hashtable[slot_id_found].type<<" -> "<<hash.Hashtable[slot_function_found].signature[2];
                                         hash.Hashtable[slot_id_found].type=hash.Hashtable[slot_function_found].signature[2];
-                                        cout<<" //------ after: "<<hash.Hashtable[slot_id_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2];
+                                        cout<<" //------ after: "<<hash.Hashtable[slot_id_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2]<<" - loop_arg: "<<loop_arg;
                                     }
                                 }
 
@@ -1461,7 +1484,8 @@ void SymbolTable::run(string filename)
                                 
                                 else if(argu_type==3){  // tham so thu i la bien
                                     int level_argu_found=blockLevel;
-                                    int slot_argu_found=hash.lookupR(argument_arr[i],level_argu_found);
+                                    int loop_arg_i=0;
+                                    int slot_argu_found=hash.lookupR(argument_arr[i],level_argu_found,loop_arg_i);
                                     if(slot_argu_found==-1){  // ko tim thay bien trong tham so thu i
                                         // close file
                                         myFile.close();   
@@ -1486,6 +1510,8 @@ void SymbolTable::run(string filename)
 
                                     }
 
+                                    //cout<<" - loop_arg_i: "<<loop_arg_i;
+                                    
                                     // bien truyen vao co kieu khac ham
                                     char argu_type_=hash.Hashtable[slot_argu_found].type;
                                     char para_type_=hash.Hashtable[slot_function_found].signature[2*i+2];
@@ -1496,15 +1522,15 @@ void SymbolTable::run(string filename)
                                             cout<<" // ---- tham so thu "<<i<<" chua co kieu nen se dc suy theo kieu cua doi so truyen vao:";
                                             cout<<" // ----- "<<((argu_type_=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<endl;
                                             hash.Hashtable[slot_function_found].signature[2*i+2]=(argu_type_=='N')?'N':'S';
-                                            cout<<"--- after: "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                            cout<<"--- after: "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg_i: "<<loop_arg_i<<endl;
                                         }
                                         else if(hash.Hashtable[slot_function_found].signature[2*i+2]=='N'&&argu_type_=='N'){ // tham so thu i co kieu num va doi so cung la num
                                             cout<<" // ------ hop le: "<<((argu_type_=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<endl;
-                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg_i: "<<loop_arg_i<<endl;
                                         }
                                         else if(hash.Hashtable[slot_function_found].signature[2*i+2]=='S'&&argu_type_=='S'){ // tham so thu i co kieu string va doi so cung la string
                                             cout<<" // ------ hop le: "<<((argu_type_=='N')?'N':'S')<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<endl;
-                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<endl;
+                                            cout<<" // ------ "<<hash.Hashtable[slot_function_found].signature<<" - loop_arg_i: "<<loop_arg_i<<endl;
                                         }
                                         else{   // tham so duy nhat va doi so khong hop kieu
                                             // dong file
@@ -1534,7 +1560,7 @@ void SymbolTable::run(string filename)
                                         else{   // parameter have type => argument will be type of parameter
                                             cout<<" //------ before: "<<hash.Hashtable[slot_argu_found].type<<" -> "<<hash.Hashtable[slot_function_found].signature[2*i+2];
                                             hash.Hashtable[slot_argu_found].type=hash.Hashtable[slot_function_found].signature[2*i+2];
-                                            cout<<" //------ after: "<<hash.Hashtable[slot_argu_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2*i+2];
+                                            cout<<" //------ after: "<<hash.Hashtable[slot_argu_found].type<<" <- "<<hash.Hashtable[slot_function_found].signature[2*i+2]<<" - loop_arg_i: "<<loop_arg_i;
                                         }
 
                                     }
@@ -1575,10 +1601,10 @@ void SymbolTable::run(string filename)
                         if(hash.Hashtable[slot_function_found].signature[0]=='#'){
                             cout<<"/====== this fucntion don't have type => type of fucntion will be: ";
                             hash.Hashtable[slot_function_found].signature[0]='V';
-                            cout<<hash.Hashtable[slot_function_found].signature<<endl;
+                            cout<<hash.Hashtable[slot_function_found].signature<<" - loop_func: "<<loop_func<<endl;
                         }
                         else if(hash.Hashtable[slot_function_found].signature[0]=='V'){
-                            cout<<"this fucntion have type Void => call ok"<<endl;
+                            cout<<"this fucntion have type Void => call ok"<<" - loop_func: "<<loop_func<<endl;
                         }
                         else{
                             myFile.close();
@@ -1657,7 +1683,8 @@ void SymbolTable::run(string filename)
                     cout<<(++the_number)<<"---"<<component[0]<<"-"<<component[1];
                     int level_found=blockLevel;
                     //int level_found=3;
-                    int slot_find=hash.lookupR(component[1],level_found);
+                    int loop=0;
+                    int slot_find=hash.lookupR(component[1],level_found,loop);
                     if(slot_find==-1){  //khong tim thay
                         // khi lenh sai tien hanh dong file 
                         myFile.close();   
@@ -1669,8 +1696,10 @@ void SymbolTable::run(string filename)
 
                     }
                     else{   //tim thay tai slot_find
+                        //cout<<" - loop: "<<loop;
+
                         // cout<<component[1]<<" in slot "<<slot_find<<" at level : "<<level_found<<endl;
-                        cout<<" // ------ tim thay: "<<component[1]<<" --- tai: "<<slot_find<<" --- level: "<<level_found<<endl;
+                        cout<<" // ------ tim thay: "<<component[1]<<" --- tai: "<<slot_find<<" --- level: "<<level_found<<" - loop: "<<loop<<endl;
 
                     }
                     // cout<<component[1]<<" in slot "<<slot_find<<" at level : "<<level_found<<endl;

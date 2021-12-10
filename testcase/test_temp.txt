@@ -1,17 +1,7 @@
 LINEAR 19 7
 INSERT a2 1
-INSERT a1 3
-INSERT b
-INSERT c
-ASSIGN b 5
-ASSIGN c 'ahihi'
-INSERT d
 BEGIN
-INSERT f
-ASSIGN f c
-INSERT m
-ASSIGN b m
-ASSIGN a2 a1
-CALL a1(4,' hehe ',8)
-CALL a1(7,' hihi       ',10)
+INSERT b
+ASSIGN b 4
+ASSIGN b a2('   fajsdl   k        ')
 END
