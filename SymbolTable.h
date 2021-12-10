@@ -525,6 +525,7 @@ public:
         }
         return -1;         
     }
+    
     int lookup_doubleR(string name,int& level){
         int level_temp=level;
         int mxloop=this->maxLoop;
@@ -551,6 +552,35 @@ public:
         return -1;         
 
     }
+
+    int lookup_doubleR(string name,int& level,int&loop){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        for (int i = level_temp; i >=0; i--)
+        {
+            level=i;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h1_k=h1(key);
+            int h2_k=h2(key);
+
+            for (int j = mxloop; j >=0; j--)
+            {
+                loop=j;
+                int h_p=(h1_k+c1*j*h2_k)%capacity;
+                //cout<<i<<"-"<<j<<"-"<<c1<<"-"<<h1_k<<"-"<<h2_k<<endl;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+                else{
+                    continue;
+                }
+            }        
+
+        }
+        return -1;         
+
+    }
+
 
     int lookup_quadratic(string name,int level){
         int level_temp=level;
@@ -596,6 +626,30 @@ public:
         
     }
 
+    int lookup_quadraticR(string name,int &level,int&loop){
+        int level_temp=level;
+        int mxloop=this->maxLoop;
+        for (int i = level_temp; i >=0; i--)
+        {
+            level=i;
+            U_KEY_NUM key=transfer_Name_to_num_Key(name,i);
+            int h_k=h1(key);
+            for (int j = 0; j <= mxloop; j++)
+            {
+                loop=j;
+                int h_p=(h_k+c1*j+c2*j*j)%capacity;
+                // cout<<level<<"-"<<h_k<<"-"<<h_p<<"-"<<j<<"-"<<c1<<"-"<<c2<<endl;
+                if((Hashtable[h_p].empty==false)&&(level==Hashtable[h_p].level)&&(name.compare(Hashtable[h_p].identifier)==0)){
+                    return h_p;
+                }
+            }
+            
+        }
+        return -1;
+        
+    }
+
+
     int lookupR(string name,int &level){
         if(this->probing=='Q'){
             return lookup_quadraticR(name,level);
@@ -611,10 +665,10 @@ public:
 
     int lookupR(string name,int &level,int &loop){
         if(this->probing=='Q'){
-            return lookup_quadraticR(name,level);
+            return lookup_quadraticR(name,level,loop);
         }
         else if(this->probing=='D'){
-            return lookup_doubleR(name,level);
+            return lookup_doubleR(name,level,loop);
         }
         else{
             return lookup_linearR(name,level,loop);
